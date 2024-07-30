@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from Action import MoveAction, Action, IdleAction
+from test.ChatBot import ChatBot
 
 
 class Entity(ABC):
@@ -9,6 +10,7 @@ class Entity(ABC):
         self.name = name
         self.current_zone = None
         self.current_action = None
+        self.chatbot = ChatBot()
 
     def do_action(self):                # 행동을 옮기는 부분
         if self.current_action is None:
@@ -26,6 +28,10 @@ class Entity(ABC):
     def set_zone(self, zone):
         self.current_zone = zone
 
+    @abstractmethod
+    def talk(self) -> str:
+        return None
+
     def __str__(self):
         return f"Entity[{self.name}]"
 
@@ -36,6 +42,13 @@ class NPC(Entity):
 
     def choose_action(self):
         return IdleAction(self)
+
+    def talk(self) -> str:
+        # 대화 내용이 자동 저장되는게 아니라 따로 관리할 수 있도록 해보는게 좋을거 같음
+        self.chatbot.response()
+
+    def get_chat_history(self, communication):
+        return communication.get_chat_history()
 
     def __str__(self):
         return f"NPC[{self.name}]"
