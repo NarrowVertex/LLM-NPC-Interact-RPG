@@ -21,11 +21,11 @@ class Communication:
             for participant in self.participants:
                 talk = participant.talk(self)
 
-                print(f"[{participant.name}] {talk}")
-
                 if talk.endswith("END"):
                     is_conversation_end = True
                     talk = talk[:-3]
+
+                print(f"[{participant.name}] {talk}")
 
                 self.chat_history.add_message(HumanMessage(
                     self.message_template.invoke({

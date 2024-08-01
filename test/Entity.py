@@ -130,7 +130,7 @@ class Player(Entity):
         print("Who do you want to talk?")
 
         entities = self.current_zone.entities
-        entities.remove(self)
+        entities = [x for x in entities if x != self]
         for i, entity in enumerate(entities):
             print(f"  {i+1}. {entity}")
         print(f"  0. 돌아가기")

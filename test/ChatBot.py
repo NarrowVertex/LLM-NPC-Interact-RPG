@@ -37,7 +37,7 @@ class ChatBot:
 
             Notice: The 'uid' is user id, 'content' is the message content.
             Your 'uid' is {uid}
-            But you don't need to answer like this, you can just answer the message content only.
+            But you don't have to answer like this, you have to just answer the message content only.
             
             If you want to end the conversation, say a word 'END' at last.
             """),
