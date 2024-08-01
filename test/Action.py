@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from Communication import Communication
+
 
 class Action(ABC):
     def __init__(self,action_name, entity, turn_count):
@@ -51,11 +53,10 @@ class MoveAction(Action):
 
 
 class CommunicateAction(Action):
-    def __init__(self, entity):
+    def __init__(self, entity, all_entities):
         super().__init__("communicate", entity, 1)
+        self.communication = Communication()
+        self.communication.add_participants(all_entities)
 
     def invoke(self):
-        pass
-
-    def execute(self):
-        pass
+        self.communication.start_conversation()

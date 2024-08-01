@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from Action import MoveAction, Action, IdleAction
-from test.ChatBot import ChatBot
+from Action import MoveAction, Action, IdleAction, CommunicateAction
+from ChatBot import ChatBot
 
 
 class Entity(ABC):
@@ -29,7 +29,7 @@ class Entity(ABC):
         self.current_zone = zone
 
     @abstractmethod
-    def talk(self) -> str:
+    def talk(self, communication) -> str:
         return None
 
     def __str__(self):
@@ -37,18 +37,21 @@ class Entity(ABC):
 
 
 class NPC(Entity):
-    def __init__(self, name):
+    def __init__(self, name, role, role_description):
         super().__init__(name)
+        self.role = role
+        self.role_description = role_description
 
     def choose_action(self):
         return IdleAction(self)
 
-    def talk(self) -> str:
-        # 대화 내용이 자동 저장되는게 아니라 따로 관리할 수 있도록 해보는게 좋을거 같음
-        self.chatbot.response()
-
-    def get_chat_history(self, communication):
-        return communication.get_chat_history()
+    def talk(self, communication) -> str:
+        return self.chatbot.response(
+            role=self.role,
+            role_description=self.role_description,
+            uid=self.name,
+            chat_history=communication.chat_history
+        )
 
     def __str__(self):
         return f"NPC[{self.name}]"
@@ -77,13 +80,14 @@ class Player(Entity):
             if action_number == 1:
                 print()
                 action = self.choose_move_action()
-                if action is None:
-                    print("Wrong Input. . . \n")
-                    continue
             elif action_number == 2:
-                pass
+                print()
+                action = self.choose_communicate_action()
             else:
                 print("Not available action number. . . \n")
+                continue
+
+            if action is None:
                 continue
 
             break
@@ -93,6 +97,7 @@ class Player(Entity):
 
     def choose_move_action(self) -> MoveAction:         # 이 함수가 실행될 때는 current_zone은 Place 일것이므로
         print("Which place do you want to go?")
+
         places = self.current_zone.get_places()
         for i, place in enumerate(places):
             print(f"  {i+1}. {place}")
@@ -120,6 +125,39 @@ class Player(Entity):
 
         move_action = MoveAction(self, route, destination)
         return move_action
+
+    def choose_communicate_action(self) -> CommunicateAction:
+        print("Who do you want to talk?")
+
+        entities = self.current_zone.entities
+        entities.remove(self)
+        for i, entity in enumerate(entities):
+            print(f"  {i+1}. {entity}")
+        print(f"  0. 돌아가기")
+
+        user_input = input("Input a entity number: ")
+
+        try:
+            entity_number = int(user_input)
+        except:
+            print("Wrong Input. . . \n")
+            return None
+
+        try:
+            entity = entities[entity_number - 1]
+        except:
+            print("Not available entity number. . . \n")
+            return None
+
+        communicate_entities = []
+        communicate_entities.append(self)
+        communicate_entities.append(entity)
+        communicate_action = CommunicateAction(self, communicate_entities)
+        return communicate_action
+
+    def talk(self, communication) -> str:
+        print()
+        return input("Write your sentence: ")
 
     def __str__(self):
         return f"Player[{self.name}]"

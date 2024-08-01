@@ -35,9 +35,9 @@ class HeroAndDemonKingGame(Game):
         Route("Town-Demon King's Castle", [town_place, demon_king_castle_place], 3)
 
         player = Player("Player")
-        demon_king = NPC("Demon King")
-        civilian = NPC("Civilian")
-        spy = NPC("spy")
+        demon_king = NPC("Demon King", "a helpful assistant", "Answer all questions to the best of your ability")
+        civilian = NPC("Civilian", "a helpful assistant", "Answer all questions to the best of your ability")
+        spy = NPC("spy", "a helpful assistant", "Answer all questions to the best of your ability")
 
         start_place.add_entity(player)
         town_place.add_entity(civilian)

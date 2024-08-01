@@ -1,4 +1,5 @@
 from langchain_core.chat_history import InMemoryChatMessageHistory, BaseChatMessageHistory
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableWithMessageHistory
@@ -10,10 +11,19 @@ import os
 load_dotenv()
 
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful assistant. Answer all questions to the best of your ability."),
+    ("system", """
+    You are a helpful assistant. Answer all questions to the best of your ability.
+    """),
+    ("human", """
+    The following is a conversations between a human and an AI.
+    The AI is talkative and provides lots of specific details from its context.
+    If the AI does not know the answer to a question, it truthfully says it does not know.
+    
+    Notice: The 'uid' is user id, 'role' is user role for human or ai, 'content' is the message content.
+    """),
     MessagesPlaceholder(variable_name="chat_history"),
-    ("human", "{input}")
 ])
+
 model = ChatOpenAI(
     model=os.getenv("OPENAI_DEPLOYMENT"),
     openai_api_key=os.getenv("OPENAI_API_KEY"),
@@ -29,23 +39,28 @@ chain = prompt | model | output_parser
 # RunnableWithMessageHistory 설정
 history = InMemoryChatMessageHistory()
 
-
-def get_history() -> BaseChatMessageHistory:
-    return history
-
-
-chain_with_history = RunnableWithMessageHistory(
-    chain,
-    get_history,
-    input_messages_key="input",
-    history_messages_key="chat_history"
-)
-
 human_inputs = [
-    "안녕, 나는 샘이라고 해",
-    "2022년 월드컵에서 어느 나라가 우승했지?",
-    "결승전 경기를 자세히 설명해줘",
-    "내 이름이 뭐라 그랬지?"
+    """
+    {
+        uid: "user-1"
+        rule: "human"
+        content: "안녕, 나는 샘이야"
+    }
+    """,
+    """
+    {
+        uid: "user-2"
+        rule: "human"
+        content: "안녕, 나는 존이야"
+    }
+    """,
+    """
+    {
+        uid: "user-3"
+        rule: "human"
+        content: "안녕, 나는 션이야"
+    }
+    """
 ]
 
 print("\n")
@@ -53,11 +68,20 @@ for input in human_inputs:
     print(f"Me: {input}")
 
     # 체인 실행
-    output = chain_with_history.invoke(
-        {"input": input},
-        config={"configurable": {}}
-    )
+    history.add_message(HumanMessage(input))
 
-    print(f"AI: {output}")
+print("\n")
+
+output = chain.invoke(
+    {
+        "chat_history": history.messages
+    }
+)
+print("output: ")
+print(output)
+print("")
+
+print("Total history: ")
+print(history)
 
 print("\n")
