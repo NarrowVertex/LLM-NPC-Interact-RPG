@@ -16,12 +16,16 @@ class Communication:
         self.participants = entities
 
     def start_conversation(self):
-        while True:
+        is_conversation_end = False
+        while not is_conversation_end:
             for participant in self.participants:
-                participant: Entity
                 talk = participant.talk(self)
 
                 print(f"[{participant.name}] {talk}")
+
+                if talk.endswith("END"):
+                    is_conversation_end = True
+                    talk = talk[:-3]
 
                 self.chat_history.add_message(HumanMessage(
                     self.message_template.invoke({
@@ -29,6 +33,12 @@ class Communication:
                         "content": talk
                     }).to_string()
                 ))
+
+                if is_conversation_end:
+                    break
+
+        print()
+        print("The conversation is end now!")
 
     def save_conversation(self):
         pass
