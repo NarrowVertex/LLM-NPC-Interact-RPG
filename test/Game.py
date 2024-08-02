@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from Map import Map, Place, Route
+from Map import Map, Place, Route, SuperPlace
 from Entity import Entity, Player, NPC
 
 
@@ -80,6 +80,13 @@ class HeroAndDemonKingGame(Game):
         self.add_entity(civilian)
         self.add_entity(spy)
 
+        self.player = player
+        self.super_place = SuperPlace(
+            [player, civilian, spy, demon_king],
+            [start_place, town_place, holy_sword_place, demon_king_castle_place]
+        )
+
+
     def start_turn(self):
         print()
         print(f"-- Turn[{self.current_turn}]", "-"*40)
@@ -92,6 +99,13 @@ class HeroAndDemonKingGame(Game):
             print("\n")
 
         self.current_turn += 1
+
+    def test_entity_conversation(self):
+        self.player.set_zone(self.super_place)
+
+        while True:
+            action = self.player.choose_communicate_action()
+            action.invoke()
 
 
 class MafiaGame(Game):

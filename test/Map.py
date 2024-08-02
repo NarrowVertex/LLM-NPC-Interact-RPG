@@ -70,6 +70,13 @@ class Route(Zone):
         return f"Route[{self.name}]"
 
 
+class SuperPlace(Place):
+    def __init__(self, entities, routes):
+        super().__init__("SUPER PLACE")
+        self.entities = entities
+        self.routes = routes
+
+
 class Map:
     def __init__(self):
         self.places = []

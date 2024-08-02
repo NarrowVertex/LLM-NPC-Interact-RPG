@@ -32,14 +32,26 @@ class ChatBot:
             You are {role}. {role_description}.
              
             The following is a conversations between users.
-            You are talkative and provides lots of specific details from its context.
+            If you have a proper reason, you can provide some information.
+            On the other hand, if you have a proper reason, you don't need to provide the information.
             If you does not know the answer to a question, it truthfully says it does not know.
 
             Notice: The 'uid' is user id, 'content' is the message content.
             Your 'uid' is {uid}
-            But you don't have to answer like this, you have to just answer the message content only.
+            like this:
+            '''
+            [
+                "uid": str
+                "content": str
+            ]
+            '''
             
-            If you want to end the conversation, say a word 'END' at last.
+            And your response is like this:
+            '''str'''
+            
+            You don't need to answer with uid and content, but just answer context only.
+            
+            If you want to end the conversation or the conversation is end, say a word 'END' at last.
             """),
             MessagesPlaceholder(variable_name="chat_history")
         ])
