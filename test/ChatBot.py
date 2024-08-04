@@ -26,10 +26,42 @@ class ChatBot:
 
         load_dotenv()
 
+        action_prompt = ChatPromptTemplate.from_messages([
+            ("system",
+             """
+            You are now an agent who is given a role and a story to act on.
+            Given the following roles, stories, actions, and possible actions, tell me what you would think and do in this situation.
+            Your output format should be like this:
+            [
+                think: str
+                action: str
+            ]
+             """)
+        ])
+
+        role_assign_prompt = ChatPromptTemplate.from_messages([
+            ("system", "{order}"),
+            ("system", """
+            Role:
+            You are {role}.
+            {role_description}.
+            
+            Story:
+            {story}
+            
+            Your Action History:
+            {action_history}
+            
+            Available Actions:
+            {available_actions}
+            """)
+        ])
+
         prompt = ChatPromptTemplate.from_messages([
             ("system",
              """
-            You are {role}. {role_description}.
+            You are {role}.
+            {role_description}.
              
             The following is a conversations between users.
             If you have a proper reason, you can provide some information.
