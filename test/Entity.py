@@ -80,6 +80,7 @@ class NPC(Entity):
             available_actions=self.available_actions
         )
         print(f"action: \n{action}")
+        self.action_history.append(action)
 
         return IdleAction(self)
 

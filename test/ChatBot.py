@@ -35,6 +35,16 @@ class ChatBot:
             think: str
             action: str
         ]
+        
+        When you choose a action, you can choose only one action and one property for each parameters.
+        ex)
+        Available Actions:
+        Move(destination='Town', 'Town2', 'Town3')
+        
+        [
+            think: I want to go to Town2
+            action: Move(destination='Town2')
+        ]
         """
 
         self.talk_order = """
