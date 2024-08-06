@@ -8,7 +8,7 @@ from Entity import Entity, Player, NPC
 def load_npc_from_json(file_path):
     with open(file_path, 'r') as file:
         data = json.load(file)
-        npc = NPC(data['name'], data['description'], data['role_description'])
+        npc = NPC(data['name'], data['description'], data['role_description'], data['story'])
         return npc
 
 

@@ -37,12 +37,50 @@ class Entity(ABC):
 
 
 class NPC(Entity):
-    def __init__(self, name, role, role_description):
+    def __init__(self, name, role, role_description, story):
         super().__init__(name)
         self.role = role
         self.role_description = role_description
+        self.story = story
+        self.action_history = []
+        self.available_actions = ""
+
+    def update_available_actions(self):
+        self.available_actions = ""
+
+        # Idle
+        self.available_actions += "Idle()\n"
+
+        # Move
+        places = self.current_zone.get_places()
+        if len(places) != 0:
+            place_names = [x.name for x in places]
+            place_names = str(place_names).replace("[", "").replace("]", "")
+            # format: Move(destination=home, hill, outside)
+            self.available_actions += f"Move(destination={place_names})\n"
+
+        # Talk
+        entities = self.current_zone.entities
+        if len(entities) > 1:
+            entity_names = [x.name for x in entities if x != self]
+            entity_names = str(entity_names).replace("[", "").replace("]", "")
+            # format: Talk(target=vegetable marketeer, guard, passenger)
+            self.available_actions += f"Talk(target={entity_names})\n"
 
     def choose_action(self):
+        self.update_available_actions()
+        print(f"available_actions: \n{self.available_actions}")
+
+        action = self.chatbot.get_action(
+            role=self.role,
+            role_description=self.role_description,
+            uid=self.name,
+            story=self.story,
+            action_history="\n".join(self.action_history),
+            available_actions=self.available_actions
+        )
+        print(f"action: \n{action}")
+
         return IdleAction(self)
 
     def talk(self, communication) -> str:
@@ -50,6 +88,9 @@ class NPC(Entity):
             role=self.role,
             role_description=self.role_description,
             uid=self.name,
+            story=self.story,
+            action_history="\n".join(self.action_history),
+            available_actions=self.available_actions,
             chat_history=communication.chat_history
         )
 

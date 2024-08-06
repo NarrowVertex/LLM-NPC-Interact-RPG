@@ -26,18 +26,34 @@ class ChatBot:
 
         load_dotenv()
 
-        action_prompt = ChatPromptTemplate.from_messages([
-            ("system",
-             """
-            You are now an agent who is given a role and a story to act on.
-            Given the following roles, stories, actions, and possible actions, tell me what you would think and do in this situation.
-            Your output format should be like this:
-            [
-                think: str
-                action: str
-            ]
-             """)
-        ])
+        self.action_order = """
+        You are now an agent who is given a role and a story to act on.
+        Given the following roles, stories, actions, and possible actions, tell me what you would think and do in this situation.
+
+        Your output format should be like this:
+        [
+            think: str
+            action: str
+        ]
+        """
+
+        self.talk_order = """
+        You are now an agent who is given a role and a story to act on.
+        Given the following roles, stories, actions, and possible actions, you talks to other users.
+
+        The next to the possible actions is a conversations between users.
+        If you have a proper reason, you can provide some information.
+        On the other hand, if you have a proper reason, you don't need to provide the information.
+        If you does not know the answer to a question, it truthfully says it does not know.
+
+        Notice: The 'uid' is user id, 'content' is the message content.
+        Your 'uid' is {uid}
+
+        But you do NOT have to say only the message content, not with uid.
+        Just answer the message content only.
+
+        If you want to end the conversation or the conversation is end, say a word 'END' at last.
+        """
 
         role_assign_prompt = ChatPromptTemplate.from_messages([
             ("system", "{order}"),
@@ -45,48 +61,19 @@ class ChatBot:
             Role:
             You are {role}.
             {role_description}.
-            
+
             Story:
             {story}
-            
+
             Your Action History:
             {action_history}
-            
+
             Available Actions:
             {available_actions}
-            """)
-        ])
-
-        prompt = ChatPromptTemplate.from_messages([
-            ("system",
-             """
-            You are {role}.
-            {role_description}.
-             
-            The following is a conversations between users.
-            If you have a proper reason, you can provide some information.
-            On the other hand, if you have a proper reason, you don't need to provide the information.
-            If you does not know the answer to a question, it truthfully says it does not know.
-
-            Notice: The 'uid' is user id, 'content' is the message content.
-            Your 'uid' is {uid}
-            like this:
-            '''
-            [
-                "uid": str
-                "content": str
-            ]
-            '''
-            
-            And your response is like this:
-            '''str'''
-            
-            You don't need to answer with uid and content, but just answer context only.
-            
-            If you want to end the conversation or the conversation is end, say a word 'END' at last.
             """),
             MessagesPlaceholder(variable_name="chat_history")
         ])
+
         model = ChatOpenAI(
             model=os.getenv("OPENAI_DEPLOYMENT"),
             openai_api_key=os.getenv("OPENAI_API_KEY"),
@@ -97,12 +84,28 @@ class ChatBot:
         )
         output_parser = StrOutputParser()
 
-        self.chain = prompt | model | output_parser
+        self.chain = role_assign_prompt | model | output_parser
 
-    def response(self, role, role_description, uid, chat_history: BaseChatMessageHistory):
+    def get_action(self, role, role_description, uid, story, action_history, available_actions):
         return self.chain.invoke({
+            "order": self.action_order,
             "role": role,
             "role_description": role_description,
             "uid": uid,
+            "story": story,
+            "action_history": action_history,
+            "available_actions": available_actions,
+            "chat_history": []
+        })
+
+    def response(self, role, role_description, uid, story, action_history, available_actions, chat_history: BaseChatMessageHistory):
+        return self.chain.invoke({
+            "order": self.talk_order,
+            "role": role,
+            "role_description": role_description,
+            "uid": uid,
+            "story": story,
+            "action_history": action_history,
+            "available_actions": available_actions,
             "chat_history": chat_history.messages
         })

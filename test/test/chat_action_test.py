@@ -1,6 +1,7 @@
+from langchain_core.chat_history import InMemoryChatMessageHistory
+from langchain_core.messages import HumanMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnableParallel
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
 
 from dotenv import load_dotenv
@@ -11,6 +12,7 @@ load_dotenv()
 action_order = """
 You are now an agent who is given a role and a story to act on.
 Given the following roles, stories, actions, and possible actions, tell me what you would think and do in this situation.
+
 Your output format should be like this:
 [
     think: str
@@ -19,11 +21,23 @@ Your output format should be like this:
 """
 
 talk_order = """
-The following is a conversations between users.
+You are now an agent who is given a role and a story to act on.
+Given the following roles, stories, actions, and possible actions, you talks to other users.
+
+The next to the possible actions is a conversations between users.
 If you have a proper reason, you can provide some information.
 On the other hand, if you have a proper reason, you don't need to provide the information.
 If you does not know the answer to a question, it truthfully says it does not know.
--> 수정 필요
+
+Notice: The 'uid' is user id, 'content' is the message content.
+Your 'uid' is {uid}
+
+And your response is like this:
+str
+
+You don't need to answer with uid and content, but just answer context only.
+
+If you want to end the conversation or the conversation is end, say a word 'END' at last.
 """
 
 role_assign_prompt = ChatPromptTemplate.from_messages([
@@ -41,7 +55,8 @@ role_assign_prompt = ChatPromptTemplate.from_messages([
 
     Available Actions:
     {available_actions}
-    """)
+    """),
+    MessagesPlaceholder(variable_name="chat_history")
 ])
 
 model = ChatOpenAI(
@@ -75,16 +90,50 @@ action_history = """
 ]
 """
 available_actions = """
+Idle()
 Move(destination=home, hill, outside)
 Talk(target=vegetable marketeer, guard, passenger), 
 Look around()
 """
+
 result = chain.invoke({
     "order": action_order,
     "role": role,
     "role_description": role_description,
     "story": story,
     "action_history": action_history,
-    "available_actions": available_actions
+    "available_actions": available_actions,
+    "chat_history": []
 })
 print(result)
+
+'''
+chat_history = InMemoryChatMessageHistory()
+while True:
+    user_input = input("input: ")
+    user_input = f"""
+    [
+        "uid": "user-1"
+        "content": {user_input}
+    ]
+    """
+    chat_history.add_message(HumanMessage(user_input))
+
+    result = chain.invoke({
+        "order": talk_order,
+        "role": role,
+        "role_description": role_description,
+        "story": story,
+        "action_history": action_history,
+        "available_actions": available_actions,
+        "chat_history": chat_history.messages
+    })
+    print(result)
+    result = f"""
+    [
+        "uid": "a civilian"
+        "content": {result}
+    ]
+    """
+    chat_history.add_message(HumanMessage(result))
+'''
