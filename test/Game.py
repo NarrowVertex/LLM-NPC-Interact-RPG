@@ -28,6 +28,9 @@ class Game(ABC):
     def add_place(self, place: Place):
         self.game_map.places.append(place)
 
+    def get_place(self, place_name: str) -> Place | None:
+        return self.game_map.get_place(place_name)
+
 
 class HeroAndDemonKingGame(Game):
     def __init__(self):
@@ -38,9 +41,9 @@ class HeroAndDemonKingGame(Game):
         holy_sword_place = Place("Holy Sword")
         demon_king_castle_place = Place("Demon King's Castle")
 
-        Route("Start-Town", [start_place, town_place], 3)
-        Route("Town-Holy Sword", [town_place, holy_sword_place], 3)
-        Route("Town-Demon King's Castle", [town_place, demon_king_castle_place], 3)
+        Route("Start-Town", [start_place, town_place], 1)
+        Route("Town-Holy Sword", [town_place, holy_sword_place], 1)
+        Route("Town-Demon King's Castle", [town_place, demon_king_castle_place], 1)
 
         player = Player("Player")
         civilian = load_npc_from_json("test/npc/civilian.json")

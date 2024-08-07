@@ -21,7 +21,7 @@ class Zone:
         self.remove_entity(entity)                                  # 원래 엔티티가 있던 이 장소의 리스트에서 없애서
         other_zone.add_entity(entity)                               # 가고자 하는 곳으로 보내줌
         entity.current_zone = other_zone
-        print(f"{entity} moved from {self} to {other_zone}")
+        # print(f"{entity} moved from {self} to {other_zone}")
 
     def __str__(self):
         return f"Zone[{self.name}]"
@@ -37,6 +37,18 @@ class Place(Zone):
 
     def get_routes(self) -> list:
         return self.routes
+
+    def get_route_by_destination(self, destination_name):
+        for route in self.routes:
+            if route.get_destination(destination_name) is not None:
+                return route
+        return None
+
+    def get_destination_by_name(self, destination_name):
+        for route in self.routes:
+            if (destination := route.get_origin(destination_name)) is not None:
+                return destination
+        return None
 
     def get_places(self) -> list:
         return [x.get_destination(self.name) for x in self.routes]
@@ -54,13 +66,13 @@ class Route(Zone):
         for place in places:
             place.add_route(self)
 
-    def get_origin(self, place_name):
+    def get_origin(self, place_name):       # place_name: current_place_name
         for place in self.places:
             if place.name == place_name:
                 return place
         return None
 
-    def get_destination(self, place_name):
+    def get_destination(self, place_name):       # place_name: current_place_name
         for place in self.places:
             if place.name != place_name:
                 return place
@@ -89,3 +101,9 @@ class Map:
 
     def add_routes(self, route: Route):
         self.routes.append(route)
+
+    def get_place(self, place_name: str) -> Place | None:
+        for place in self.places:
+            if place_name == place.name:
+                return place
+        return None

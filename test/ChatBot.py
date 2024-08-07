@@ -31,14 +31,14 @@ class ChatBot:
         Given the following roles, stories, actions, and possible actions, tell me what you would think and do in this situation.
 
         Your output format should be like this:
-        { "think": str, "action": str }
+        { "think": str, "action": { "name": "str", "params": { "parameter1": "str", "parameter2": "str", ... } } }
         
         When you choose a action, you can choose only one action and one property for each parameters.
         ex)
         Available Actions:
         Move(destination='Town', 'Town2', 'Town3')
         
-        { "think": "I want to go to Town2", "action": "Move(destination='Town2')" }
+        { "think": "I want to go to Town2", "action": { "name": "Move", "params": { "destination": "Town2" } } }
         """
 
         self.talk_order = """
@@ -54,7 +54,7 @@ class ChatBot:
         Your 'uid' is {uid}
         
         Your output format should be like this:
-        { "uid": str, "content": str }
+        { "uid": "your_uid", "content": "message_content" }
         
         If you want to end the conversation or the conversation is end, say a word 'END' at last of content.
         """

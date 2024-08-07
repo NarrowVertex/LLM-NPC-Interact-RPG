@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import PromptTemplate
@@ -11,8 +13,7 @@ class Communication:
         self.participants = []
         self.chat_history = InMemoryChatMessageHistory()
         self.message_template = PromptTemplate.from_template(
-            "{{" + """\n\t"uid": "{uid}", \n\t"content": "{content}"\n""" + "}}"
-        )
+            "{{" + """ "uid": "{uid}", "content": "{content}" """ + "}}")
 
     def add_participants(self, entities):
         self.participants = entities
@@ -22,8 +23,12 @@ class Communication:
         while not is_conversation_end:
             for participant in self.participants:
                 talk = participant.talk(self)
-                print(talk)
-                talk_json = json.loads(talk)
+                try:
+                    talk_json = json.loads(talk)
+                except JSONDecodeError:
+                    print("Error occured when talk_json!")
+                    print(talk)
+
                 content = talk_json["content"]
 
                 if content.endswith("END"):
@@ -40,7 +45,11 @@ class Communication:
         print("The conversation is end now!")
 
     def save_conversation(self):
-        pass
+        messages = self.get_chat_history().messages
+        str_messages = []
+        for message in messages:
+            str_messages.append(message.content)
+        return "\n".join(str_messages)
 
     def get_chat_history(self):
         return self.chat_history

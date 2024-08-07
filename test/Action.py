@@ -32,14 +32,19 @@ class IdleAction(Action):
 
 
 class MoveAction(Action):
-    def __init__(self, entity, route, destination):
+    def __init__(self, entity, departure, destination):
+        route = departure.get_route_by_destination(destination.name)
+        print(departure, destination, route)
+
         super().__init__("move", entity, route.length)
         self.route = route
+        self.departure = departure
         self.destination = destination
 
     def invoke(self):
         # 플레이어가 있는 곳에서 루트로 옮김
         self.entity.current_zone.move_entity(self.entity, self.route)
+        self.entity.log(f"{self.entity} moved from {self.route} to {self.route.get_destination(self.entity.current_zone)}")
 
     def execute(self):                      # 행동 시간이 끝날 때까지 길목에 대기하고, 행동 시간이 끝나면 목표에 도착
         is_action_end = super().execute()
@@ -60,3 +65,6 @@ class CommunicateAction(Action):
 
     def invoke(self):
         self.communication.start_conversation()
+        conversation = self.communication.save_conversation()
+        for entity in self.communication.participants:
+            entity.log(f"conversation: \n{conversation}")

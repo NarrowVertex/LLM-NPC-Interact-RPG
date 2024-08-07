@@ -1,3 +1,4 @@
+import json
 from abc import ABC, abstractmethod
 
 from Action import MoveAction, Action, IdleAction, CommunicateAction
@@ -31,6 +32,10 @@ class Entity(ABC):
     @abstractmethod
     def talk(self, communication) -> str:
         return None
+
+    @abstractmethod
+    def log(self, content):
+        pass
 
     def __str__(self):
         return f"Entity[{self.name}]"
@@ -71,7 +76,7 @@ class NPC(Entity):
         self.update_available_actions()
         print(f"available_actions: \n{self.available_actions}")
 
-        action = self.chatbot.get_action(
+        response = self.chatbot.get_action(
             role=self.role,
             role_description=self.role_description,
             uid=self.name,
@@ -79,10 +84,27 @@ class NPC(Entity):
             action_history="\n".join(self.action_history),
             available_actions=self.available_actions
         )
-        print(f"action: \n{action}")
-        self.action_history.append(action)
+        response_json = json.loads(response)
+        print(f"think: {response_json['think']}")
+        print(f"action: {response_json['action']}")
 
-        return IdleAction(self)
+        action_json = response_json['action']
+        action_name = action_json['name']
+        params = action_json['params']
+
+        self.action_history.append(str(action_json))
+
+        action = None
+        if action_name == "Idle":
+            action = IdleAction(self)
+        elif action_name == "Move":
+            destination_name = params['destination']
+            destination = self.current_zone.get_destination_by_name(destination_name)
+            action = MoveAction(self, self.current_zone, destination)
+        elif action_name == "Talk":
+            action = IdleAction(self)
+
+        return action
 
     def talk(self, communication) -> str:
         return self.chatbot.response(
@@ -94,6 +116,9 @@ class NPC(Entity):
             available_actions=self.available_actions,
             chat_history=communication.chat_history
         )
+
+    def log(self, content):
+        self.action_history.append(content)
 
     def __str__(self):
         return f"NPC[{self.name}]"
@@ -109,8 +134,9 @@ class Player(Entity):
         while True:
             print("Choose your action!")
             print("  Available Actions")
-            print("  1. Move")
-            print("  2. Communicate")
+            print("  1. Idle")
+            print("  2. Move")
+            print("  3. Communicate")
             user_input = input("Input a action number: ")
 
             try:
@@ -121,8 +147,11 @@ class Player(Entity):
 
             if action_number == 1:
                 print()
-                action = self.choose_move_action()
+                action = IdleAction(self)
             elif action_number == 2:
+                print()
+                action = self.choose_move_action()
+            elif action_number == 3:
                 print()
                 action = self.choose_communicate_action()
             else:
@@ -163,9 +192,7 @@ class Player(Entity):
             print("Not available place number. . . \n")
             return None
 
-        route = self.current_zone.get_routes()[place_number - 1]        # places와 routes 모두 같은 인덱스를 공유하므로
-
-        move_action = MoveAction(self, route, destination)
+        move_action = MoveAction(self, self.current_zone, destination)
         return move_action
 
     def choose_communicate_action(self) -> CommunicateAction:
@@ -183,6 +210,10 @@ class Player(Entity):
             entity_number = int(user_input)
         except:
             print("Wrong Input. . . \n")
+            return None
+
+        if entity_number == 0:
+            print("행동 선택으로 돌아갑니다. . . \n")
             return None
 
         try:
@@ -203,6 +234,9 @@ class Player(Entity):
             "uid": self.name,
             "content": input("Write your sentence: ")
         }).to_string()
+
+    def log(self, content):
+        print(content)
 
     def __str__(self):
         return f"Player[{self.name}]"
