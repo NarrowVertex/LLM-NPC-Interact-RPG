@@ -4,7 +4,7 @@ from Communication import Communication
 
 
 class Action(ABC):
-    def __init__(self,action_name, entity, turn_count):
+    def __init__(self, action_name, entity, turn_count):
         self.action_name = action_name
         self.entity = entity
         self.turn_count = turn_count
