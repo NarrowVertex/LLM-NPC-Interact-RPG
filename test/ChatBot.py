@@ -55,11 +55,11 @@ class ChatBot:
         Your 'uid' is {uid}
         
         Your output format should be like this:
-        { "uid": "your_uid", "content": "message_content" }
+        { "uid": "{uid}", "content": "message_content" }
         
-        If you want to end the conversation or the conversation is end, say a word 'END' at last of content.
+        If you want to end the conversation or the conversation is end in context, say a word 'END' at last of content.
         ex:
-        { "uid": "your_uid", "content": "message_content END" }
+        { "uid": "{uid}", "content": "message_content END" }
         """
 
         role_assign_prompt = ChatPromptTemplate.from_messages([
