@@ -34,6 +34,7 @@ class ChatBot:
         { "think": str, "action": { "name": "str", "params": { "parameter1": "str", "parameter2": "str", ... } } }
         
         When you choose a action, you can choose only one action and one property for each parameters.
+        Still you can't choose the action and parameters which isn't in Available Actions, 
         ex)
         Available Actions:
         Move(destination='Town', 'Town2', 'Town3')
@@ -57,6 +58,8 @@ class ChatBot:
         { "uid": "your_uid", "content": "message_content" }
         
         If you want to end the conversation or the conversation is end, say a word 'END' at last of content.
+        ex:
+        { "uid": "your_uid", "content": "message_content END" }
         """
 
         role_assign_prompt = ChatPromptTemplate.from_messages([

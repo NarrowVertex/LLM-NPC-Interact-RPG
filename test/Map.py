@@ -23,6 +23,12 @@ class Zone:
         entity.current_zone = other_zone
         # print(f"{entity} moved from {self} to {other_zone}")
 
+    def get_entity(self, name) -> Entity | None:
+        for entity in self.entities:
+            if entity.name == name:
+                return entity
+        return None
+
     def __str__(self):
         return f"Zone[{self.name}]"
 

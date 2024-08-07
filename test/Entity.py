@@ -102,7 +102,10 @@ class NPC(Entity):
             destination = self.current_zone.get_destination_by_name(destination_name)
             action = MoveAction(self, self.current_zone, destination)
         elif action_name == "Talk":
-            action = IdleAction(self)
+            # action = IdleAction(self)
+            target_name = params['target']
+            target = self.current_zone.get_entity(target_name)
+            action = CommunicateAction(self, [self, target])
 
         return action
 
@@ -222,10 +225,7 @@ class Player(Entity):
             print("Not available entity number. . . \n")
             return None
 
-        communicate_entities = []
-        communicate_entities.append(self)
-        communicate_entities.append(entity)
-        communicate_action = CommunicateAction(self, communicate_entities)
+        communicate_action = CommunicateAction(self, [self, entity])
         return communicate_action
 
     def talk(self, communication) -> str:
