@@ -2,6 +2,8 @@ from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import PromptTemplate
 
+import json
+
 
 class Communication:
 
@@ -9,7 +11,7 @@ class Communication:
         self.participants = []
         self.chat_history = InMemoryChatMessageHistory()
         self.message_template = PromptTemplate.from_template(
-            """[\n\t"uid": {uid}\n\t"content": {content}\n]"""
+            "{{" + """\n\t"uid": "{uid}", \n\t"content": "{content}"\n""" + "}}"
         )
 
     def add_participants(self, entities):
@@ -20,19 +22,16 @@ class Communication:
         while not is_conversation_end:
             for participant in self.participants:
                 talk = participant.talk(self)
+                print(talk)
+                talk_json = json.loads(talk)
+                content = talk_json["content"]
 
-                if talk.endswith("END"):
+                if content.endswith("END"):
                     is_conversation_end = True
-                    talk = talk[:-3]
+                    content = content[:-3]
 
-                print(f"[{participant.name}] {talk}")
-
-                self.chat_history.add_message(HumanMessage(
-                    self.message_template.invoke({
-                        "uid": participant.name,
-                        "content": talk
-                    }).to_string()
-                ))
+                print(f"[{participant.name}] {content}")
+                self.chat_history.add_message(HumanMessage(talk))
 
                 if is_conversation_end:
                     break

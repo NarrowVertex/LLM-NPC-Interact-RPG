@@ -199,7 +199,10 @@ class Player(Entity):
 
     def talk(self, communication) -> str:
         print()
-        return input("Write your sentence: ")
+        return communication.message_template.invoke({
+            "uid": self.name,
+            "content": input("Write your sentence: ")
+        }).to_string()
 
     def __str__(self):
         return f"Player[{self.name}]"

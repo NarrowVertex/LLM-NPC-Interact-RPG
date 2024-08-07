@@ -31,20 +31,14 @@ class ChatBot:
         Given the following roles, stories, actions, and possible actions, tell me what you would think and do in this situation.
 
         Your output format should be like this:
-        [
-            think: str
-            action: str
-        ]
+        { "think": str, "action": str }
         
         When you choose a action, you can choose only one action and one property for each parameters.
         ex)
         Available Actions:
         Move(destination='Town', 'Town2', 'Town3')
         
-        [
-            think: I want to go to Town2
-            action: Move(destination='Town2')
-        ]
+        { "think": "I want to go to Town2", "action": "Move(destination='Town2')" }
         """
 
         self.talk_order = """
@@ -58,11 +52,11 @@ class ChatBot:
 
         Notice: The 'uid' is user id, 'content' is the message content.
         Your 'uid' is {uid}
-
-        But you do NOT have to say only the message content, not with uid.
-        Just answer the message content only.
-
-        If you want to end the conversation or the conversation is end, say a word 'END' at last.
+        
+        Your output format should be like this:
+        { "uid": str, "content": str }
+        
+        If you want to end the conversation or the conversation is end, say a word 'END' at last of content.
         """
 
         role_assign_prompt = ChatPromptTemplate.from_messages([
