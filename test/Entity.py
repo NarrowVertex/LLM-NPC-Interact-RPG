@@ -11,7 +11,6 @@ class Entity(ABC):
         self.name = name
         self.current_zone = None
         self.current_action = None
-        self.chatbot = ChatBot()
 
     def do_action(self):                # 행동을 옮기는 부분
         if self.current_action is None:
@@ -50,6 +49,8 @@ class NPC(Entity):
         self.action_history = []
         self.available_actions = ""
 
+        self.chatbot = ChatBot(name, role, role_description, story)
+
     def update_available_actions(self):
         self.available_actions = ""
 
@@ -77,10 +78,6 @@ class NPC(Entity):
         print(f"available_actions: \n{self.available_actions}")
 
         response = self.chatbot.get_action(
-            role=self.role,
-            role_description=self.role_description,
-            uid=self.name,
-            story=self.story,
             action_history="\n".join(self.action_history),
             available_actions=self.available_actions
         )
@@ -111,10 +108,6 @@ class NPC(Entity):
 
     def talk(self, communication) -> str:
         return self.chatbot.response(
-            role=self.role,
-            role_description=self.role_description,
-            uid=self.name,
-            story=self.story,
             action_history="\n".join(self.action_history),
             available_actions=self.available_actions,
             chat_history=communication.chat_history

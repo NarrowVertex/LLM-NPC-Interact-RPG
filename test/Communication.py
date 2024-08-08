@@ -23,6 +23,10 @@ class Communication:
         while not is_conversation_end:
             for participant in self.participants:
                 talk = participant.talk(self)
+                if talk.endswith("END"):
+                    is_conversation_end = True
+                    talk = talk[:-3]
+
                 try:
                     talk_json = json.loads(talk)
                 except JSONDecodeError:
