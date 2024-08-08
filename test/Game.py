@@ -5,15 +5,6 @@ from abc import ABC, abstractmethod
 from SingletonMeta import SingletonMeta
 
 
-def load_npc_from_json(file_path):
-    from Entity import NPC
-
-    with open(file_path, 'r') as file:
-        data = json.load(file)
-        npc = NPC(data['name'], data['description'], data['role_description'], data['story'])
-        return npc
-
-
 def load_npc_from_yaml(file_path):
     from Entity import NPC
 

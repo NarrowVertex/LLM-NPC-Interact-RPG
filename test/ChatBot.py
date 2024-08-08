@@ -29,8 +29,12 @@ Move(destination='Town', 'Town2', 'Town3')
 talk_order_prompt = PromptTemplate.from_template("""
 You are now an agent who is given a role and a story to act on.
 Given the following roles, stories, action history, and possible actions, you talks to other users.
+
 Never do or say anything that goes beyond the given conditions.
 Act only according to the given role.
+
+Never repeat the context of a conversation. 
+Don't force a conversation, but end it when it's appropriate.
 
 The next to the possible actions is a conversations between users.
 If you have a proper reason, you can provide some information.
