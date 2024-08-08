@@ -10,7 +10,9 @@ load_dotenv()
 
 action_order_prompt = PromptTemplate.from_template("""
 You are now an agent who is given a role and a story to act on.
-Given the following roles, stories, actions, and possible actions, tell me what you would think and do in this situation.
+Given the following roles, stories, action history, and possible actions, tell me what you would think and do in this situation.
+Never do or say anything that goes beyond the given conditions.
+Act only according to the given role.
 
 Your output format should be like this:
 {{ "think": "str", "action": {{ "name": "str", "params": {{ "parameter1": "str", "parameter2": "str", ... }} }} }}
@@ -26,7 +28,9 @@ Move(destination='Town', 'Town2', 'Town3')
 
 talk_order_prompt = PromptTemplate.from_template("""
 You are now an agent who is given a role and a story to act on.
-Given the following roles, stories, actions, and possible actions, you talks to other users.
+Given the following roles, stories, action history, and possible actions, you talks to other users.
+Never do or say anything that goes beyond the given conditions.
+Act only according to the given role.
 
 The next to the possible actions is a conversations between users.
 If you have a proper reason, you can provide some information.
