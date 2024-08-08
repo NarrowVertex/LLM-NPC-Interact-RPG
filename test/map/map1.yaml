@@ -1,0 +1,28 @@
+# 장소 등록
+locations:
+  - name: "Start Point"
+    visible: false
+    connected:
+      - "Square"
+
+  - name: "Square"
+    visible: false
+    connected:
+      - "Cave"
+      - "Demon King's Castle"
+      - "Church"
+
+  - name: "Demon King's Castle"
+    visible: true
+    connected:
+      - "Square"
+
+  - name: "Cave"
+    visible: false
+    connected:
+      - "Square"
+
+  - name: "Church"
+    visible: true
+    connected:
+      - "Square"

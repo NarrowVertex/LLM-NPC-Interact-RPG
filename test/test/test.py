@@ -1,6 +1,5 @@
-civilian_role_description = ""
-civilian_role_description += "Hello \n"
-civilian_role_description += "My name is John \n"
-civilian_role_description += "Nice to meet you! \n"
-print(civilian_role_description)
+from typing import Dict
 
+d: Dict[str, str] = {"test1": 1, "test2": "test-o"}
+print(d["test1"])
+print(type(d))
