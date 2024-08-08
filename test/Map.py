@@ -10,7 +10,7 @@ def load_map_from_yaml(file_path) -> dict[str, 'Location']:
     for location_data in map_data['locations']:
         location = Location(
             name=location_data['name'],
-            visible=location_data['visible'],
+            visible=bool(location_data['visible']),
             connected=location_data['connected']
         )
         locations[location.name] = location
@@ -19,7 +19,7 @@ def load_map_from_yaml(file_path) -> dict[str, 'Location']:
 
 
 class Location:
-    def __init__(self, name, visible, connected):
+    def __init__(self, name: str, visible: bool, connected: list[str]):
         self.name = name
         self.visible = visible
         self.connected = connected
@@ -31,6 +31,15 @@ class Location:
 
     def remove_entity(self, entity):
         self.entities.remove(entity)
+
+    def get_connected_location_names(self):
+        return self.connected
+
+    def get_entity(self, entity_name):
+        for entity in self.entities:
+            if entity.name == entity_name:
+                return entity
+        return None
 
     def __str__(self):
         return f"Location[{self.name}]"
@@ -50,6 +59,7 @@ class Map:
         departure = entity.location
         departure.remove_entity(entity)
 
+        self.temp_location.add_entity(entity)
         entity.set_location(self.temp_location)
 
     def move_entity(self, entity: Entity, location_name: str):
@@ -57,6 +67,6 @@ class Map:
         destination = self.locations[location_name]
 
         departure.remove_entity(entity)
-        destination.add_entity(entity)
 
+        destination.add_entity(entity)
         entity.set_location(destination)

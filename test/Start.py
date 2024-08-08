@@ -1,10 +1,11 @@
 import argparse
+from Game import HeroAndDemonKingGame
 
-game = None
+game = HeroAndDemonKingGame()
+
 
 if __name__ == '__main__':
-    from Game import HeroAndDemonKingGame
-    game = HeroAndDemonKingGame()
+    game.game_init()
 
     parser = argparse.ArgumentParser(description="System run arguments")
     parser.add_argument('--debug', action='store_true', help="Debug mod flag")

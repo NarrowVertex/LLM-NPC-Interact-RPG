@@ -57,12 +57,11 @@ class NPC(Entity):
         self.available_actions += "Idle()\n"
 
         # Move
-        places = self.location.get_places() 여기부터
-        if len(places) != 0:
-            place_names = [x.name for x in places]
-            place_names = str(place_names).replace("[", "").replace("]", "")
+        locations = self.location.get_connected_location_names()
+        if len(locations) != 0:
+            locations = ", ".join(locations)
             # format: Move(destination=home, hill, outside)
-            self.available_actions += f"Move(destination={place_names})\n"
+            self.available_actions += f"Move(destination={locations})\n"
 
         # Talk
         entities = self.location.entities
@@ -95,8 +94,7 @@ class NPC(Entity):
             action = IdleAction(self)
         elif action_name == "Move":
             destination_name = params['destination']
-            destination = self.location.get_destination_by_name(destination_name)
-            action = MoveAction(self, self.location, destination)
+            action = MoveAction(self, destination_name)
         elif action_name == "Talk":
             # action = IdleAction(self)
             target_name = params['target']
@@ -164,9 +162,9 @@ class Player(Entity):
     def choose_move_action(self) -> MoveAction:         # 이 함수가 실행될 때는 current_zone은 Place 일것이므로
         print("Which place do you want to go?")
 
-        places = self.location.get_places()
-        for i, place in enumerate(places):
-            print(f"  {i+1}. {place}")
+        location_names = self.location.get_connected_location_names()
+        for i, location_name in enumerate(location_names):
+            print(f"  {i+1}. {location_name}")
         print(f"  0. 돌아가기")
 
         user_input = input("Input a place number: ")
@@ -182,12 +180,12 @@ class Player(Entity):
             return None
 
         try:
-            destination = places[place_number - 1]
+            destination_name = location_names[place_number - 1]
         except:
             print("Not available place number. . . \n")
             return None
 
-        move_action = MoveAction(self, self.location, destination)
+        move_action = MoveAction(self, destination_name)
         return move_action
 
     def choose_communicate_action(self) -> CommunicateAction:

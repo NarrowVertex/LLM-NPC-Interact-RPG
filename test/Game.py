@@ -2,11 +2,12 @@ import json
 import yaml
 from abc import ABC, abstractmethod
 
-from Map import Map
-from Entity import Entity, Player, NPC
+from SingletonMeta import SingletonMeta
 
 
 def load_npc_from_json(file_path):
+    from Entity import NPC
+
     with open(file_path, 'r') as file:
         data = json.load(file)
         npc = NPC(data['name'], data['description'], data['role_description'], data['story'])
@@ -14,33 +15,37 @@ def load_npc_from_json(file_path):
 
 
 def load_npc_from_yaml(file_path):
+    from Entity import NPC
+
     with open(file_path, 'r', encoding='utf-8') as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
         npc = NPC(data['name'], data['description'], data['role_description'], data['story'])
         return npc
 
 
-class Game(ABC):
-    game_map: Map
-
-    def __init__(self, map_file_path="map/map.yaml"):
+class Game(metaclass=SingletonMeta):
+    def __init__(self):
         self.entities = []
-        self.game_map = Map(map_file_path)
         self.current_turn = 0
 
     @abstractmethod
     def start_turn(self):
         pass
 
-    def add_entity(self, entity: Entity):
+    def add_entity(self, entity):
         self.entities.append(entity)
 
 
 class HeroAndDemonKingGame(Game):
     def __init__(self):
-        super().__init__(
-            map_file_path="test/map/map1.yaml"
-        )
+        super().__init__()
+        self.game_map = None
+
+    def game_init(self, map_file_path="test/map/map1.yaml"):
+        from Map import Map
+        from Entity import Player
+
+        self.game_map = Map(map_file_path)
 
         player = Player("John")
         civilian = load_npc_from_yaml("test/npc/civilian.yaml")
