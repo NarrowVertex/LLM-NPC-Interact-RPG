@@ -1,4 +1,5 @@
 import json
+import yaml
 from abc import ABC, abstractmethod
 
 from Map import Map, Place, Route, SuperPlace
@@ -8,6 +9,13 @@ from Entity import Entity, Player, NPC
 def load_npc_from_json(file_path):
     with open(file_path, 'r') as file:
         data = json.load(file)
+        npc = NPC(data['name'], data['description'], data['role_description'], data['story'])
+        return npc
+
+
+def load_npc_from_yaml(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = yaml.load(file, Loader=yaml.FullLoader)
         npc = NPC(data['name'], data['description'], data['role_description'], data['story'])
         return npc
 
@@ -46,9 +54,9 @@ class HeroAndDemonKingGame(Game):
         Route("Town-Demon King's Castle", [town_place, demon_king_castle_place], 1)
 
         player = Player("Player")
-        civilian = load_npc_from_json("test/npc/civilian.json")
-        demon_king = load_npc_from_json("test/npc/demon_king.json")
-        spy = load_npc_from_json("test/npc/spy.json")
+        civilian = load_npc_from_yaml("test/npc/civilian.yaml")
+        demon_king = load_npc_from_yaml("test/npc/demon_king.yaml")
+        spy = load_npc_from_yaml("test/npc/spy.yaml")
 
         start_place.add_entity(player)
         town_place.add_entity(civilian)
@@ -71,10 +79,9 @@ class HeroAndDemonKingGame(Game):
             [start_place, town_place, holy_sword_place, demon_king_castle_place]
         )
 
-
     def start_turn(self):
         print()
-        print(f"-- Turn[{self.current_turn}]", "-"*40)
+        print(f"-- Turn[{self.current_turn}]", "-" * 40)
         print()
 
         for entity in self.entities:
