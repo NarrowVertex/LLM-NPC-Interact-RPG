@@ -229,7 +229,6 @@ class Player(Entity):
         }).to_string()
 
     def log(self, content):
-        print(content)
         pass
 
     def __str__(self):
