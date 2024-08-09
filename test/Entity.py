@@ -115,7 +115,7 @@ class NPC(Entity):
         self.action_history.append(content)
 
     def __str__(self):
-        return f"NPC[{self.name}]"
+        return f"NPC[{self.name}]({self.role})"
 
 
 class Player(Entity):

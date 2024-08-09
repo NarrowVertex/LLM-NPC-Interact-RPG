@@ -55,7 +55,7 @@ class MoveAction(Action):
             self.game.game_map.move_entity(self.entity, self.destination_name)
 
             message = f"{self.entity} moved from {departure_name} to {self.destination_name}"
-            print(message)
+            # print(message)
             self.entity.log(message)
         else:
             print(f"{self.entity} is going to {self.destination_name}(left time: {self.left_turn}). . .")

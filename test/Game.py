@@ -43,7 +43,7 @@ class Game(metaclass=SingletonMeta):
 
     def start_turn(self):
         print()
-        print(f"-- Turn[{self.current_turn}]", "-" * 40)
+        print("-" * 20, f"Turn[{self.current_turn}]", "-" * 20)
         print()
 
         for entity in self.entities:
