@@ -32,6 +32,7 @@ class Communication:
                 except JSONDecodeError:
                     print("Error occured when talk_json!")
                     print(talk)
+                    break
 
                 content = talk_json["content"]
 

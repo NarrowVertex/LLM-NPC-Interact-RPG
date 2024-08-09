@@ -1,0 +1,7 @@
+name: HeroAndDemonKingGame
+description: Find the holy sword to defeat the demon king!
+map: map
+npc:
+  - demon_king
+  - civilian
+  - spy

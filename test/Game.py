@@ -1,47 +1,41 @@
 from SingletonMeta import SingletonMeta
 
-from DataLoader import load_npc_from_yaml
-
 
 class Game(metaclass=SingletonMeta):
     def __init__(self):
+        if Game.is_initialized():
+            return
+
         self.entities = []
         self.current_turn = 0
 
-    def start_turn(self):
-        pass
-
-    def add_entity(self, entity):
-        self.entities.append(entity)
-
-
-class HeroAndDemonKingGame(Game):
-    def __init__(self):
-        super().__init__()
+        self.game_name = None
+        self.game_description = None
         self.game_map = None
+        self.player = None
 
-    def game_init(self, map_file_path="test/map/map1.yaml"):
-        from Map import Map
+    def game_init(self, game_name, game_description, game_map, entities):
         from Entity import Player
 
-        self.game_map = Map(map_file_path)
+        self.entities = []
+        self.current_turn = 0
 
-        player = Player("John")
-        civilian = load_npc_from_yaml("test/npc/civilian.yaml")
-        demon_king = load_npc_from_yaml("test/npc/demon_king.yaml")
-        spy = load_npc_from_yaml("test/npc/spy.yaml")
+        self.game_name = game_name
+        self.game_description = game_description
+        self.game_map = game_map
 
-        self.game_map.add_entity_to_location(player, "Start Point")
-        self.game_map.add_entity_to_location(civilian, "Square")
-        self.game_map.add_entity_to_location(demon_king, "Demon King's Castle")
-        self.game_map.add_entity_to_location(spy, "Demon King's Castle")
+        player = None
+        for entity in entities:
+            self.game_map.add_entity_to_location(entity, entity.start_location_name)
+            self.add_entity(entity)
 
-        self.add_entity(player)
-        self.add_entity(demon_king)
-        self.add_entity(civilian)
-        self.add_entity(spy)
+            if isinstance(entity, Player):
+                player = entity
 
-        self.player = player
+        if player is not None:
+            self.player = player
+
+        # self.player = player
         # self.super_place = SuperPlace(
         #     [player, civilian, spy, demon_king],
         #     [start_place, town_place, holy_sword_place, demon_king_castle_place]
@@ -59,6 +53,9 @@ class HeroAndDemonKingGame(Game):
             print("\n")
 
         self.current_turn += 1
+
+    def add_entity(self, entity):
+        self.entities.append(entity)
 
     def test_entity_conversation(self):
         # self.player.set_zone(self.super_place)

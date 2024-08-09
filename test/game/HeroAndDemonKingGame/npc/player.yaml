@@ -1,0 +1,11 @@
+name: John
+role: a player
+role_description: |
+  a hero to save the world.
+story: |
+  The small medieval village of Fernhaven nestled peacefully under the protection of a lord's castle.
+  The villagers primarily engaged in farming and livestock raising, working diligently with the changing seasons.
+  At the heart of the village stood a church, the center of faith and education, where the priest imparted the teachings of God to the people.
+  The dense forest surrounding the village served as both a hunting ground and a source of peril, with villagers constantly wary of its dangers.
+  Annual festivals and religious ceremonies were vital times of unity and joy for the community, strengthening their bonds.
+start_location: Start Point

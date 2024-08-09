@@ -6,8 +6,9 @@ from ChatBot import ChatBot
 
 
 class Entity(ABC):
-    def __init__(self, name):
+    def __init__(self, name, start_location_name):
         self.name = name
+        self.start_location_name = start_location_name
         self.location = None
         self.current_action = None
 
@@ -40,8 +41,8 @@ class Entity(ABC):
 
 
 class NPC(Entity):
-    def __init__(self, name, role, role_description, story):
-        super().__init__(name)
+    def __init__(self, name, start_location_name, role, role_description, story):
+        super().__init__(name, start_location_name)
         self.role = role
         self.role_description = role_description
         self.story = story
@@ -118,8 +119,8 @@ class NPC(Entity):
 
 
 class Player(Entity):
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self, name, start_location_name):
+        super().__init__(name, start_location_name)
 
     def choose_action(self):
         action_number = -1

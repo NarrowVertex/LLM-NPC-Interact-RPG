@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 
 from Communication import Communication
-from Start import game
+from Game import Game
 
 
 class Action(ABC):
     def __init__(self, action_name, entity, turn_count):
+        self.game = Game()
+
         self.action_name = action_name
         self.entity = entity
         self.turn_count = turn_count
@@ -39,7 +41,7 @@ class MoveAction(Action):
 
     def invoke(self):
         # 플레이어가 있는 곳에서 루트로 옮김
-        game.game_map.move_entity_to_temp(self.entity)
+        self.game.game_map.move_entity_to_temp(self.entity)
         message = f"{self.entity} starts to move to {self.destination_name}"
         print(message)
         # self.entity.log(message)
@@ -50,7 +52,7 @@ class MoveAction(Action):
 
         if is_action_end:
             departure_name = self.entity.location.name
-            game.game_map.move_entity(self.entity, self.destination_name)
+            self.game.game_map.move_entity(self.entity, self.destination_name)
 
             message = f"{self.entity} moved from {departure_name} to {self.destination_name}"
             print(message)

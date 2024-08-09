@@ -1,7 +1,5 @@
 from Entity import Entity
 
-from DataLoader import load_map_from_yaml
-
 
 class Location:
     def __init__(self, name: str, visible: bool, connected: list[str]):
@@ -31,8 +29,8 @@ class Location:
 
 
 class Map:
-    def __init__(self, map_file_path):
-        self.locations = load_map_from_yaml(map_file_path)
+    def __init__(self, locations):
+        self.locations = locations
         self.temp_location = Location("temp_location", False, [])
 
     def add_entity_to_location(self, entity, location_name):

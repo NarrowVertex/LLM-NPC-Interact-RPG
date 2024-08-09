@@ -54,6 +54,10 @@ Your output format should be like this:
 If the conversation seems to be end in context, say a word 'END' at last.
 ex:
 {{ "name": "{name}", "content": "message_content END" }}
+
+But don't do this:
+{{ "name": "{name}", "content": "I have to go. Bye!" }}
+{{ "name": "{name}", "content": "END" }}
 """)
 
 role_prompt = PromptTemplate.from_template("""
