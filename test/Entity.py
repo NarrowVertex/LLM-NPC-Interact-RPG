@@ -6,10 +6,10 @@ from ChatBot import ChatBot
 
 
 class Entity(ABC):
-
-    def __init__(self, name):
+    def __init__(self, name, start_location_name):
         self.name = name
-        self.current_zone = None
+        self.start_location_name = start_location_name
+        self.location = None
         self.current_action = None
 
     def do_action(self):                # 행동을 옮기는 부분
@@ -25,8 +25,8 @@ class Entity(ABC):
     def choose_action(self) -> Action:            # 행동을 선택하는 부분
         return None
 
-    def set_zone(self, zone):
-        self.current_zone = zone
+    def set_location(self, location):
+        self.location = location
 
     @abstractmethod
     def talk(self, communication) -> str:
@@ -41,8 +41,8 @@ class Entity(ABC):
 
 
 class NPC(Entity):
-    def __init__(self, name, role, role_description, story):
-        super().__init__(name)
+    def __init__(self, name, start_location_name, role, role_description, story):
+        super().__init__(name, start_location_name)
         self.role = role
         self.role_description = role_description
         self.story = story
@@ -58,15 +58,14 @@ class NPC(Entity):
         self.available_actions += "Idle()\n"
 
         # Move
-        places = self.current_zone.get_places()
-        if len(places) != 0:
-            place_names = [x.name for x in places]
-            place_names = str(place_names).replace("[", "").replace("]", "")
+        locations = self.location.get_connected_location_names()
+        if len(locations) != 0:
+            locations = ", ".join(locations)
             # format: Move(destination=home, hill, outside)
-            self.available_actions += f"Move(destination={place_names})\n"
+            self.available_actions += f"Move(destination={locations})\n"
 
         # Talk
-        entities = self.current_zone.entities
+        entities = self.location.entities
         if len(entities) > 1:
             entity_names = [x.name for x in entities if x != self]
             entity_names = str(entity_names).replace("[", "").replace("]", "")
@@ -96,12 +95,11 @@ class NPC(Entity):
             action = IdleAction(self)
         elif action_name == "Move":
             destination_name = params['destination']
-            destination = self.current_zone.get_destination_by_name(destination_name)
-            action = MoveAction(self, self.current_zone, destination)
+            action = MoveAction(self, destination_name)
         elif action_name == "Talk":
             # action = IdleAction(self)
             target_name = params['target']
-            target = self.current_zone.get_entity(target_name)
+            target = self.location.get_entity(target_name)
             action = CommunicateAction(self, [self, target])
 
         return action
@@ -121,8 +119,8 @@ class NPC(Entity):
 
 
 class Player(Entity):
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self, name, start_location_name):
+        super().__init__(name, start_location_name)
 
     def choose_action(self):
         action_number = -1
@@ -165,9 +163,9 @@ class Player(Entity):
     def choose_move_action(self) -> MoveAction:         # 이 함수가 실행될 때는 current_zone은 Place 일것이므로
         print("Which place do you want to go?")
 
-        places = self.current_zone.get_places()
-        for i, place in enumerate(places):
-            print(f"  {i+1}. {place}")
+        location_names = self.location.get_connected_location_names()
+        for i, location_name in enumerate(location_names):
+            print(f"  {i+1}. {location_name}")
         print(f"  0. 돌아가기")
 
         user_input = input("Input a place number: ")
@@ -183,18 +181,18 @@ class Player(Entity):
             return None
 
         try:
-            destination = places[place_number - 1]
+            destination_name = location_names[place_number - 1]
         except:
             print("Not available place number. . . \n")
             return None
 
-        move_action = MoveAction(self, self.current_zone, destination)
+        move_action = MoveAction(self, destination_name)
         return move_action
 
     def choose_communicate_action(self) -> CommunicateAction:
         print("Who do you want to talk?")
 
-        entities = self.current_zone.entities
+        entities = self.location.entities
         entities = [x for x in entities if x != self]
         for i, entity in enumerate(entities):
             print(f"  {i+1}. {entity}")

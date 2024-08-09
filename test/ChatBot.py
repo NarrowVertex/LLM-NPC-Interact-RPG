@@ -29,8 +29,16 @@ Move(destination='Town', 'Town2', 'Town3')
 talk_order_prompt = PromptTemplate.from_template("""
 You are now an agent who is given a role and a story to act on.
 Given the following roles, stories, action history, and possible actions, you talks to other users.
+
 Never do or say anything that goes beyond the given conditions.
 Act only according to the given role.
+
+Never repeat the context of a conversation. 
+Don't force a conversation, but end it when it's appropriate.
+
+You only know what you know
+You just don't know what you don't know
+Never make up stories about things you don't know
 
 The next to the possible actions is a conversations between users.
 If you have a proper reason, you can provide some information.
@@ -46,6 +54,10 @@ Your output format should be like this:
 If the conversation seems to be end in context, say a word 'END' at last.
 ex:
 {{ "name": "{name}", "content": "message_content END" }}
+
+But don't do this:
+{{ "name": "{name}", "content": "I have to go. Bye!" }}
+{{ "name": "{name}", "content": "END" }}
 """)
 
 role_prompt = PromptTemplate.from_template("""
