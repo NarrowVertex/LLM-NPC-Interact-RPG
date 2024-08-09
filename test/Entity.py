@@ -74,15 +74,16 @@ class NPC(Entity):
 
     def choose_action(self):
         self.update_available_actions()
-        print(f"available_actions: \n{self.available_actions}")
+        # print(f"available_actions: \n{self.available_actions}")
 
         response = self.chatbot.get_action(
             action_history="\n".join(self.action_history),
             available_actions=self.available_actions
         )
         response_json = json.loads(response)
-        print(f"think: {response_json['think']}")
-        print(f"action: {response_json['action']}")
+        # print(f"think: {response_json['think']}")
+        # print(f"action: {response_json['action']}")
+        print(f"'{response_json['think']}'")
 
         action_json = response_json['action']
         action_name = action_json['name']
@@ -140,13 +141,10 @@ class Player(Entity):
                 continue
 
             if action_number == 1:
-                print()
                 action = IdleAction(self)
             elif action_number == 2:
-                print()
                 action = self.choose_move_action()
             elif action_number == 3:
-                print()
                 action = self.choose_communicate_action()
             else:
                 print("Not available action number. . . \n")
@@ -166,7 +164,7 @@ class Player(Entity):
         location_names = self.location.get_connected_location_names()
         for i, location_name in enumerate(location_names):
             print(f"  {i+1}. {location_name}")
-        print(f"  0. 돌아가기")
+        print(f"  0. Return")
 
         user_input = input("Input a place number: ")
 
@@ -177,7 +175,7 @@ class Player(Entity):
             return None
 
         if place_number == 0:
-            print("행동 선택으로 돌아갑니다. . . \n")
+            print("Return to choose action phase. . . \n")
             return None
 
         try:
@@ -196,7 +194,7 @@ class Player(Entity):
         entities = [x for x in entities if x != self]
         for i, entity in enumerate(entities):
             print(f"  {i+1}. {entity}")
-        print(f"  0. 돌아가기")
+        print(f"  0. Return")
 
         user_input = input("Input a entity number: ")
 
@@ -207,7 +205,7 @@ class Player(Entity):
             return None
 
         if entity_number == 0:
-            print("행동 선택으로 돌아갑니다. . . \n")
+            print("Return to choose action phase. . . \n")
             return None
 
         try:

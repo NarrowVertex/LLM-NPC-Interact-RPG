@@ -1,3 +1,5 @@
+from time import sleep
+
 from SingletonMeta import SingletonMeta
 
 
@@ -48,11 +50,13 @@ class Game(metaclass=SingletonMeta):
 
         for entity in self.entities:
             print(f"== {entity} Turn! ==")
-            print(f"current_zone: {entity.location}\n")
+            print(f"  {entity.location}\n")
             entity.do_action()
-            print("\n")
+            sleep(3)
+            print("\n\n")
 
         self.current_turn += 1
+        print("\n\n\n")
 
     def add_entity(self, entity):
         self.entities.append(entity)
