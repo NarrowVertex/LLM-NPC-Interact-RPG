@@ -1,21 +1,6 @@
 from Entity import Entity
-import yaml
 
-
-def load_map_from_yaml(file_path) -> dict[str, 'Location']:
-    with open(file_path, 'r', encoding='UTF8') as file:
-        map_data = yaml.safe_load(file)
-
-    locations = {}
-    for location_data in map_data['locations']:
-        location = Location(
-            name=location_data['name'],
-            visible=bool(location_data['visible']),
-            connected=location_data['connected']
-        )
-        locations[location.name] = location
-
-    return locations
+from DataLoader import load_map_from_yaml
 
 
 class Location:

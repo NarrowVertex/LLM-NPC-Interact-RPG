@@ -1,17 +1,6 @@
-import json
-import yaml
-from abc import ABC, abstractmethod
-
 from SingletonMeta import SingletonMeta
 
-
-def load_npc_from_yaml(file_path):
-    from Entity import NPC
-
-    with open(file_path, 'r', encoding='utf-8') as file:
-        data = yaml.load(file, Loader=yaml.FullLoader)
-        npc = NPC(data['name'], data['description'], data['role_description'], data['story'])
-        return npc
+from DataLoader import load_npc_from_yaml
 
 
 class Game(metaclass=SingletonMeta):
@@ -19,7 +8,6 @@ class Game(metaclass=SingletonMeta):
         self.entities = []
         self.current_turn = 0
 
-    @abstractmethod
     def start_turn(self):
         pass
 
