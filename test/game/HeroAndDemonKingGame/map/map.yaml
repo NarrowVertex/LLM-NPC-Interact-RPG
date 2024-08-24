@@ -10,7 +10,6 @@ locations:
     connected:
       - "Cave"
       - "Demon King's Castle"
-      - "Church"
 
   - name: "Demon King's Castle"
     visible: true
@@ -19,10 +18,5 @@ locations:
 
   - name: "Cave"
     visible: false
-    connected:
-      - "Square"
-
-  - name: "Church"
-    visible: true
     connected:
       - "Square"

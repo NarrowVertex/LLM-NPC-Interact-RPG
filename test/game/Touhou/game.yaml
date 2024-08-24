@@ -1,0 +1,5 @@
+name: Touhou Project Simulator
+description: Simulate Gensokyo to test
+map: map
+npc:
+  - player

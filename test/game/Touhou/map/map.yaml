@@ -1,0 +1,11 @@
+# 장소 등록
+locations:
+  - name: "Hakurei Shrine"
+    visible: true
+    connected:
+      - "Town"
+
+  - name: "Town"
+    visible: true
+    connected:
+      - "Hakurei Shrine"
